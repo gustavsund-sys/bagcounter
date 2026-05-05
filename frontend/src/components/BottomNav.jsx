@@ -11,7 +11,7 @@ const items = [
 export const BottomNav = () => {
     return (
         <nav
-            className="fixed bottom-0 left-0 right-0 z-40 border-t border-stone-200 bg-white/95 backdrop-blur-md"
+            className="fixed bottom-0 left-0 right-0 z-50 border-t border-stone-200 bg-white/95 backdrop-blur-md"
             data-testid="bottom-nav"
         >
             <div className="max-w-md mx-auto flex justify-around items-center h-20 pb-2">
