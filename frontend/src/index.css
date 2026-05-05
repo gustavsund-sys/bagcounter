@@ -46,7 +46,10 @@ html, body {
     body { @apply bg-background text-foreground; }
 }
 
-/* Subtle scan animation for AI loading */
+/* Push Emergent preview badge above the BottomNav so it does not overlap nav buttons */
+#emergent-badge {
+    bottom: 88px !important;
+}
 @keyframes scanline {
     0% { transform: translateY(0%); opacity: 0.0; }
     10% { opacity: 0.9; }
