@@ -167,11 +167,11 @@ export default function TodayPage() {
                         <RotateCcw size={14} /> Rensa
                     </button>
                 </div>
-                <div className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3">
+                <div className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-2">
                     <button
                         type="button"
                         onClick={() => setCount((c) => Math.max(0, c - 1))}
-                        className="h-14 w-14 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 flex items-center justify-center"
+                        className="h-14 w-14 flex-shrink-0 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 flex items-center justify-center"
                         data-testid="decrement-btn"
                         aria-label="Minska"
                     >
@@ -180,18 +180,19 @@ export default function TodayPage() {
                     <input
                         type="number"
                         min="0"
+                        inputMode="numeric"
                         value={count}
                         onChange={(e) => {
                             const n = parseInt(e.target.value, 10);
                             setCount(isNaN(n) ? 0 : Math.max(0, n));
                         }}
-                        className="flex-1 h-14 text-center font-chivo font-black text-3xl bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-forest focus:border-transparent outline-none"
+                        className="flex-1 min-w-0 w-full h-14 text-center font-chivo font-black text-2xl bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-forest focus:border-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         data-testid="count-input"
                     />
                     <button
                         type="button"
                         onClick={() => setCount((c) => c + 1)}
-                        className="h-14 w-14 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 flex items-center justify-center"
+                        className="h-14 w-14 flex-shrink-0 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 flex items-center justify-center"
                         data-testid="increment-btn"
                         aria-label="Öka"
                     >
