@@ -205,7 +205,7 @@ async def count_photo(req: CountPhotoRequest):
         api_key=EMERGENT_LLM_KEY,
         session_id=f"bag-count-{uuid.uuid4()}",
         system_message=system_msg,
-    ).with_model("gemini", "gemini-2.5-pro")
+    ).with_model("gemini", "gemini-2.5-flash")
 
     image_content = ImageContent(image_base64=img_b64)
     user_message = UserMessage(text=user_text, file_contents=[image_content])
