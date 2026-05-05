@@ -1,5 +1,5 @@
 import "@/App.css";
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { BottomNav } from "./components/BottomNav";
@@ -8,6 +8,17 @@ import HistoryPage from "./pages/HistoryPage";
 import RegistersPage from "./pages/RegistersPage";
 
 function App() {
+    useEffect(() => {
+        const removeBadge = () => {
+            const el = document.getElementById("emergent-badge");
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+        };
+        removeBadge();
+        const observer = new MutationObserver(removeBadge);
+        observer.observe(document.body, { childList: true, subtree: false });
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <div className="App min-h-screen bg-bone">
             <BrowserRouter>

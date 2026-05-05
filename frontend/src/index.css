@@ -46,9 +46,12 @@ html, body {
     body { @apply bg-background text-foreground; }
 }
 
-/* Push Emergent preview badge above the BottomNav so it does not overlap nav buttons */
+/* Hide Emergent preview badge (inline !important means we can't override display, so use visibility/opacity/transform) */
 #emergent-badge {
-    bottom: 88px !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translate(200%, 200%) !important;
 }
 @keyframes scanline {
     0% { transform: translateY(0%); opacity: 0.0; }
