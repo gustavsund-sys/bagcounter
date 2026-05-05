@@ -1,11 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Camera, History, Layers } from "lucide-react";
+import { Camera, History, Store } from "lucide-react";
 
 const items = [
     { to: "/", label: "Idag", icon: Camera, testid: "nav-today" },
     { to: "/historik", label: "Historik", icon: History, testid: "nav-history" },
-    { to: "/typer", label: "Typer", icon: Layers, testid: "nav-types" },
+    { to: "/kassor", label: "Kassor", icon: Store, testid: "nav-registers" },
 ];
 
 export const BottomNav = () => {

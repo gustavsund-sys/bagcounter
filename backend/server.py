@@ -30,22 +30,22 @@ api_router = APIRouter(prefix="/api")
 
 
 # --- Models ---
-class BagType(BaseModel):
+class Register(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     description: Optional[str] = ""
-    color: Optional[str] = "#D4A373"
+    color: Optional[str] = "#2A3B32"
     order: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
-class BagTypeCreate(BaseModel):
+class RegisterCreate(BaseModel):
     name: str
     description: Optional[str] = ""
-    color: Optional[str] = "#D4A373"
+    color: Optional[str] = "#2A3B32"
 
 
-class BagTypeUpdate(BaseModel):
+class RegisterUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     color: Optional[str] = None
@@ -54,49 +54,49 @@ class BagTypeUpdate(BaseModel):
 
 class CountPhotoRequest(BaseModel):
     image_base64: str
-    bag_types: List[Dict[str, str]]  # [{"id":..., "name":..., "description":...}]
 
 
 class CountPhotoResult(BaseModel):
-    counts: Dict[str, int]  # bag_type_id -> count
+    count: int
     notes: str = ""
 
 
 class DailyCount(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     date: str  # YYYY-MM-DD
-    counts: Dict[str, int]  # bag_type_id -> count
+    register_id: str
+    register_name: str  # snapshot for history readability
+    count: int
     note: Optional[str] = ""
-    image_base64: Optional[str] = None  # thumbnail for record (optional)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class DailyCountCreate(BaseModel):
     date: str
-    counts: Dict[str, int]
+    register_id: str
+    count: int
     note: Optional[str] = ""
-    image_base64: Optional[str] = None
 
 
 # --- Helpers ---
-DEFAULT_BAG_TYPES = [
-    {"name": "Liten påse", "description": "Liten kraftpåse", "color": "#E0C9A6", "order": 0},
-    {"name": "Mellan påse", "description": "Mellanstor kraftpåse", "color": "#D4A373", "order": 1},
-    {"name": "Stor påse", "description": "Stor kraftpåse med handtag", "color": "#A88358", "order": 2},
+DEFAULT_REGISTERS = [
+    {"name": "Kassa 1", "description": "", "color": "#2A3B32", "order": 0},
+    {"name": "Kassa 2", "description": "", "color": "#5A7A6E", "order": 1},
+    {"name": "Kassa 3", "description": "", "color": "#A88358", "order": 2},
 ]
 
 
-async def ensure_seed_bag_types():
-    count = await db.bag_types.count_documents({})
+async def ensure_seed_registers():
+    count = await db.registers.count_documents({})
     if count == 0:
-        for t in DEFAULT_BAG_TYPES:
-            bt = BagType(**t)
-            doc = bt.model_dump()
+        for r in DEFAULT_REGISTERS:
+            reg = Register(**r)
+            doc = reg.model_dump()
             doc["created_at"] = doc["created_at"].isoformat()
-            await db.bag_types.insert_one(doc)
+            await db.registers.insert_one(doc)
 
 
-def _serialize_bag_type(d: dict) -> dict:
+def _serialize_register(d: dict) -> dict:
     if isinstance(d.get("created_at"), str):
         try:
             d["created_at"] = datetime.fromisoformat(d["created_at"])
@@ -120,43 +120,42 @@ async def root():
     return {"message": "Påsräknaren API", "status": "ok"}
 
 
-# Bag Types CRUD
-@api_router.get("/bag-types", response_model=List[BagType])
-async def list_bag_types():
-    await ensure_seed_bag_types()
-    items = await db.bag_types.find({}, {"_id": 0}).sort("order", 1).to_list(1000)
-    return [BagType(**_serialize_bag_type(i)) for i in items]
+# Registers (Kassor) CRUD
+@api_router.get("/registers", response_model=List[Register])
+async def list_registers():
+    await ensure_seed_registers()
+    items = await db.registers.find({}, {"_id": 0}).sort("order", 1).to_list(1000)
+    return [Register(**_serialize_register(i)) for i in items]
 
 
-@api_router.post("/bag-types", response_model=BagType)
-async def create_bag_type(payload: BagTypeCreate):
-    # determine order = max+1
-    last = await db.bag_types.find({}, {"_id": 0, "order": 1}).sort("order", -1).limit(1).to_list(1)
+@api_router.post("/registers", response_model=Register)
+async def create_register(payload: RegisterCreate):
+    last = await db.registers.find({}, {"_id": 0, "order": 1}).sort("order", -1).limit(1).to_list(1)
     next_order = (last[0]["order"] + 1) if last else 0
-    bt = BagType(**payload.model_dump(), order=next_order)
-    doc = bt.model_dump()
+    reg = Register(**payload.model_dump(), order=next_order)
+    doc = reg.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
-    await db.bag_types.insert_one(doc)
-    return bt
+    await db.registers.insert_one(doc)
+    return reg
 
 
-@api_router.put("/bag-types/{type_id}", response_model=BagType)
-async def update_bag_type(type_id: str, payload: BagTypeUpdate):
+@api_router.put("/registers/{register_id}", response_model=Register)
+async def update_register(register_id: str, payload: RegisterUpdate):
     update_data = {k: v for k, v in payload.model_dump().items() if v is not None}
     if not update_data:
         raise HTTPException(status_code=400, detail="No fields to update")
-    res = await db.bag_types.update_one({"id": type_id}, {"$set": update_data})
+    res = await db.registers.update_one({"id": register_id}, {"$set": update_data})
     if res.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Bag type not found")
-    item = await db.bag_types.find_one({"id": type_id}, {"_id": 0})
-    return BagType(**_serialize_bag_type(item))
+        raise HTTPException(status_code=404, detail="Register not found")
+    item = await db.registers.find_one({"id": register_id}, {"_id": 0})
+    return Register(**_serialize_register(item))
 
 
-@api_router.delete("/bag-types/{type_id}")
-async def delete_bag_type(type_id: str):
-    res = await db.bag_types.delete_one({"id": type_id})
+@api_router.delete("/registers/{register_id}")
+async def delete_register(register_id: str):
+    res = await db.registers.delete_one({"id": register_id})
     if res.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Bag type not found")
+        raise HTTPException(status_code=404, detail="Register not found")
     return {"deleted": True}
 
 
@@ -183,35 +182,23 @@ async def count_photo(req: CountPhotoRequest):
         raise HTTPException(status_code=500, detail="LLM key not configured")
     if not req.image_base64:
         raise HTTPException(status_code=400, detail="image_base64 required")
-    if not req.bag_types:
-        raise HTTPException(status_code=400, detail="bag_types required")
 
     # Strip data URL prefix if present
     img_b64 = req.image_base64
     if img_b64.startswith("data:"):
         img_b64 = img_b64.split(",", 1)[1] if "," in img_b64 else img_b64
 
-    # Build a clear instruction
-    types_desc = "\n".join(
-        f"- ID: {t['id']} | NAMN: {t.get('name','')} | BESKRIVNING: {t.get('description','')}"
-        for t in req.bag_types
-    )
-
     system_msg = (
-        "Du är en specialist på att räkna pappersbärkassar/påsar i lager- och butiksbilder. "
-        "Du tittar på bilder av staplar med kraftpapperspåsar i fack och uppskattar antalet. "
-        "Räkna varje stapel/fack noggrant. Om bilden inte tydligt visar någon stapel av en viss typ, "
-        "returnera 0 för den typen. Svara ALLTID med ENDAST giltig JSON, inget annat."
+        "Du är en specialist på att räkna pappersbärkassar/påsar i butiksbilder. "
+        "Du tittar på bilder av staplar med kraftpapperspåsar i fack vid en kassa och uppskattar "
+        "TOTALA antalet påsar i bilden. Räkna varje stapel/fack noggrant och summera. "
+        "Svara ALLTID med ENDAST giltig JSON, inget annat."
     )
 
     user_text = (
-        "Räkna påsarna på bilden. Kategorisera dem enligt följande typer:\n\n"
-        f"{types_desc}\n\n"
-        "Räkna det totala antalet påsar PER TYP-ID baserat på beskrivningarna. "
-        "Om en bild verkar visa flera fack/staplar, summera dem per typ. "
+        "Räkna det TOTALA antalet påsar/kassar på bilden. Summera alla staplar och fack du ser. "
         "Returnera ENDAST en JSON med exakt detta format (inga kommentarer, inga code fences):\n"
-        '{ "counts": { "<TYPE_ID>": <heltal>, ... }, "notes": "<kort kommentar på svenska>" }\n\n'
-        "Inkludera ALLA typ-ID från listan ovan i counts (även om värdet är 0)."
+        '{ "count": <heltal>, "notes": "<kort kommentar på svenska om hur du räknade>" }'
     )
 
     chat = LlmChat(
@@ -230,26 +217,30 @@ async def count_photo(req: CountPhotoRequest):
         raise HTTPException(status_code=502, detail=f"AI-fel: {str(e)}")
 
     parsed = _extract_json(response if isinstance(response, str) else str(response))
-    raw_counts = parsed.get("counts", {})
+    raw_count = parsed.get("count", 0)
     notes = parsed.get("notes", "")
 
-    # Normalize counts: ensure all bag type IDs present, integer values
-    counts: Dict[str, int] = {}
-    valid_ids = {t["id"] for t in req.bag_types}
-    for tid in valid_ids:
-        v = raw_counts.get(tid, 0)
-        try:
-            counts[tid] = max(0, int(v))
-        except (TypeError, ValueError):
-            counts[tid] = 0
+    try:
+        count = max(0, int(raw_count))
+    except (TypeError, ValueError):
+        count = 0
 
-    return CountPhotoResult(counts=counts, notes=str(notes)[:500])
+    return CountPhotoResult(count=count, notes=str(notes)[:500])
 
 
 # Daily counts
 @api_router.post("/daily-counts", response_model=DailyCount)
 async def create_daily_count(payload: DailyCountCreate):
-    dc = DailyCount(**payload.model_dump())
+    register = await db.registers.find_one({"id": payload.register_id}, {"_id": 0})
+    if not register:
+        raise HTTPException(status_code=404, detail="Register not found")
+    dc = DailyCount(
+        date=payload.date,
+        register_id=payload.register_id,
+        register_name=register["name"],
+        count=max(0, int(payload.count)),
+        note=payload.note or "",
+    )
     doc = dc.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
     await db.daily_counts.insert_one(doc)
@@ -257,10 +248,11 @@ async def create_daily_count(payload: DailyCountCreate):
 
 
 @api_router.get("/daily-counts", response_model=List[DailyCount])
-async def list_daily_counts(limit: int = 100):
+async def list_daily_counts(limit: int = 200, register_id: Optional[str] = None):
+    query = {"register_id": register_id} if register_id else {}
     items = (
-        await db.daily_counts.find({}, {"_id": 0, "image_base64": 0})
-        .sort("date", -1)
+        await db.daily_counts.find(query, {"_id": 0})
+        .sort([("date", -1), ("created_at", -1)])
         .to_list(limit)
     )
     return [DailyCount(**_serialize_daily(i)) for i in items]
@@ -302,7 +294,9 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def startup_event():
-    await ensure_seed_bag_types()
+    await ensure_seed_registers()
+    # one-time migration: drop old daily_counts entries that use the old schema
+    await db.daily_counts.delete_many({"register_id": {"$exists": False}})
 
 
 @app.on_event("shutdown")

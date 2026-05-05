@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 import { BottomNav } from "./components/BottomNav";
 import TodayPage from "./pages/TodayPage";
 import HistoryPage from "./pages/HistoryPage";
-import TypesPage from "./pages/TypesPage";
+import RegistersPage from "./pages/RegistersPage";
 
 function App() {
     return (
@@ -15,7 +15,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<TodayPage />} />
                         <Route path="/historik" element={<HistoryPage />} />
-                        <Route path="/typer" element={<TypesPage />} />
+                        <Route path="/kassor" element={<RegistersPage />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                     <BottomNav />

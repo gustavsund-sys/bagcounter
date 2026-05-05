@@ -126,7 +126,7 @@ export const PhotoCapture = ({ onCount, isCounting, bagTypesCount }) => {
             </div>
             {bagTypesCount === 0 && (
                 <p className="mt-3 text-sm text-stone-500" data-testid="no-types-warning">
-                    Lägg till minst en påstyp i fliken <strong>Typer</strong> först.
+                    Lägg till minst en kassa i fliken <strong>Kassor</strong> först.
                 </p>
             )}
         </div>

@@ -6,16 +6,18 @@ export const API = `${BACKEND_URL}/api`;
 const client = axios.create({ baseURL: API, headers: { "Content-Type": "application/json" } });
 
 export const api = {
-    listBagTypes: () => client.get("/bag-types").then((r) => r.data),
-    createBagType: (data) => client.post("/bag-types", data).then((r) => r.data),
-    updateBagType: (id, data) => client.put(`/bag-types/${id}`, data).then((r) => r.data),
-    deleteBagType: (id) => client.delete(`/bag-types/${id}`).then((r) => r.data),
+    listRegisters: () => client.get("/registers").then((r) => r.data),
+    createRegister: (data) => client.post("/registers", data).then((r) => r.data),
+    updateRegister: (id, data) => client.put(`/registers/${id}`, data).then((r) => r.data),
+    deleteRegister: (id) => client.delete(`/registers/${id}`).then((r) => r.data),
 
-    countPhoto: (image_base64, bag_types) =>
-        client.post("/count-photo", { image_base64, bag_types }, { timeout: 90000 }).then((r) => r.data),
+    countPhoto: (image_base64) =>
+        client.post("/count-photo", { image_base64 }, { timeout: 90000 }).then((r) => r.data),
 
-    listDailyCounts: () => client.get("/daily-counts").then((r) => r.data),
-    getDailyCount: (id) => client.get(`/daily-counts/${id}`).then((r) => r.data),
+    listDailyCounts: (registerId) =>
+        client
+            .get("/daily-counts", { params: registerId ? { register_id: registerId } : {} })
+            .then((r) => r.data),
     createDailyCount: (data) => client.post("/daily-counts", data).then((r) => r.data),
     deleteDailyCount: (id) => client.delete(`/daily-counts/${id}`).then((r) => r.data),
 };
