@@ -1,0 +1,102 @@
+{
+  "project_context": {
+    "domain": "Utility/Inventory App",
+    "theme": "Light",
+    "archetype": "Archetype 1 (Organic & Earthy) - 'Kraft Minimalism'",
+    "vibe": "Scandinavian minimalist workplace tool. Grounded, matte, physical, clean, fast. Designed for grocery store workers."
+  },
+  "typography": {
+    "font_strategy": "The Soft Utility",
+    "heading_font": "Chivo",
+    "body_font": "Work Sans",
+    "css_import": "@import url('https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;700;900&family=Work+Sans:wght@400;500;600&display=swap');",
+    "rules": {
+      "h1": "font-chivo text-4xl sm:text-5xl font-black tracking-tight leading-none text-stone-900",
+      "h2": "font-chivo text-2xl sm:text-3xl font-bold tracking-tight text-stone-900",
+      "h3": "font-chivo text-xl font-bold tracking-tight text-stone-800",
+      "body": "font-work text-base text-stone-600 leading-relaxed",
+      "label_overline": "font-work text-xs uppercase tracking-[0.2em] font-semibold text-stone-500",
+      "number_stat": "font-chivo text-5xl font-black tracking-tighter text-stone-900"
+    }
+  },
+  "colors": {
+    "backgrounds": {
+      "app": "bg-[#F9F8F6] (stone-50) - Warm bone/sand tone.",
+      "surface": "bg-[#FFFFFF] (white) - For compartments and cards.",
+      "scanner_overlay": "bg-black/90 - For the camera viewfinder background."
+    },
+    "brand_accents": {
+      "primary": "bg-[#2A3B32] text-white - Deep forest green. High contrast against kraft paper.",
+      "primary_hover": "hover:bg-[#1E2A23] hover:text-white",
+      "secondary": "bg-[#D4A373] text-stone-900 - Kraft paper brown. Use for tags or secondary highlights.",
+      "destructive": "bg-[#DC2626] text-white"
+    },
+    "text": {
+      "primary": "text-[#1C1917] (stone-900)",
+      "secondary": "text-[#57534E] (stone-500)",
+      "inverse": "text-white"
+    },
+    "borders": {
+      "subtle": "border-[#E7E5E4] (stone-200)",
+      "focus": "focus:ring-2 focus:ring-[#2A3B32] focus:border-transparent"
+    }
+  },
+  "spacing_and_layout": {
+    "strategy": "Mobile-first 'Control Room' grid. Dense but tap-friendly. Generous padding inside containers.",
+    "global_padding": "p-4 md:p-6 lg:p-8",
+    "card_padding": "p-6",
+    "border_radius": "rounded-2xl (applies a slightly soft but modern edge, max 16px).",
+    "grid_patterns": {
+      "dashboard_stats": "grid grid-cols-2 gap-4",
+      "compartment_list": "flex flex-col gap-4",
+      "bottom_nav": "flex justify-around items-center h-20 bg-white border-t border-stone-200 pb-safe"
+    }
+  },
+  "surface_strategies": {
+    "cards": "Flat Solid. bg-white border border-stone-200 shadow-sm. NO glassmorphism. It must feel tactile and real.",
+    "floating_action_button": "Solid shadow-lg bg-[#2A3B32] text-white rounded-full h-16 w-16 flex items-center justify-center fixed bottom-24 right-6 z-50.",
+    "header": "Solid bg-[#F9F8F6] z-40 sticky top-0 pb-4 pt-6"
+  },
+  "components": {
+    "buttons": {
+      "primary": "h-14 px-8 rounded-xl bg-[#2A3B32] text-white font-chivo font-bold text-lg transition-transform active:scale-95 flex items-center justify-center gap-2",
+      "secondary": "h-14 px-8 rounded-xl bg-white border border-stone-200 text-stone-900 font-chivo font-bold text-lg transition-transform active:scale-95",
+      "counter_adjust": "h-12 w-12 rounded-lg bg-stone-100 text-stone-900 flex items-center justify-center active:bg-stone-200 transition-colors"
+    },
+    "inputs": "h-14 bg-white border border-stone-200 rounded-xl px-4 font-work text-base focus:ring-2 focus:ring-[#2A3B32] outline-none",
+    "bottom_sheet_modal": "Shadcn Dialog/Drawer customized. bg-white rounded-t-3xl p-6"
+  },
+  "motion": {
+    "micro_interactions": "Fast and responsive. active:scale-[0.98] on all clickable items.",
+    "page_transitions": "Fade in. No complex sliding.",
+    "loading_state": "When AI is counting: A fullscreen semi-transparent overlay with a minimal scanning line animation over the image and a text like 'Analyserar...'."
+  },
+  "media": {
+    "icons_library": "@phosphor-icons/react (Duotone or Regular weight). Clean, professional.",
+    "image_urls": {
+      "empty_state_bg": {
+        "url": "https://images.unsplash.com/photo-1532630571098-79a3d222b00d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwxfHxicm93biUyMGtyYWZ0JTIwcGFwZXIlMjBiYWclMjBtaW5pbWFsfGVufDB8fHx8MTc3Nzk2NjA5Mnww&ixlib=rb-4.1.0&q=85",
+        "description": "Minimal brown paper texture. Can be used at 10% opacity as a background element for empty states or onboarding."
+      }
+    }
+  },
+  "swedish_localization": {
+    "camera_btn": "Ta Bild",
+    "today_tab": "Idag",
+    "history_tab": "Historik",
+    "settings_tab": "Typer",
+    "total_count": "Totalt antal påsar",
+    "save_btn": "Spara Dagens Antal",
+    "add_type": "Lägg till påstyp",
+    "ai_loading": "Räknar påsar..."
+  },
+  "instructions_to_main_agent": [
+    "INSTALL FONTS: Ensure you update index.css to import Chivo and Work Sans, and update tailwind.config.js font families.",
+    "INSTALL ICONS: yarn add @phosphor-icons/react",
+    "TESTING: Every interactive element MUST have a kebab-case role-based 'data-testid' attribute (e.g., data-testid='take-photo-button', data-testid='increment-small-bag').",
+    "MOCK AI: Since this is an MVP, the camera action should open a standard file input (or use navigator.mediaDevices if possible), then simulate a 3-second loading state, and return mock counts populated into the categories.",
+    "LOCAL STORAGE: Save daily history and bag types (compartments) in localStorage so the app works without login and persists data.",
+    "LAYOUT: Must be strictly mobile-first. Max-width on desktop should be constrained (e.g. max-w-md mx-auto) to mimic a mobile app view, or adapt gracefully to a multi-column 'Control Room' dashboard on wide screens.",
+    "AESTHETIC: Avoid purple/teal generic SaaS styles. Stick to the stone-50 background, white cards, and deep forest green primary buttons. It should feel like a physical, premium inventory tool."
+  ]
+}
